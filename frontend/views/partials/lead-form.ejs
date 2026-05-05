@@ -1,0 +1,61 @@
+<section class="tsrg-lead" id="lead-form">
+  <div class="tsrg-container">
+    <div class="tsrg-form-panel">
+      <div class="tsrg-form-panel__glow" aria-hidden="true"></div>
+      <div class="tsrg-lead__copy">
+        <h2><%= content.form.headline %></h2>
+        <p><%= content.form.subheadline %></p>
+      </div>
+      <form
+        class="tsrg-lead-form"
+        data-success-message="<%= content.form.successMessage %>"
+        data-next-steps="<%- JSON.stringify(content.form.nextSteps || []) %>"
+        data-error-required="This field is required."
+        data-error-email="Please enter a valid email address."
+        data-error-phone="Please enter at least 10 phone digits."
+        data-error-submit="Lead submission failed. Please call or try again shortly."
+        data-error-consent="Please confirm consent to continue."
+        novalidate
+      >
+        <% content.form.fields.forEach(function(field) { %>
+          <% const configuredValue = field.name === 'interest' && field.value === 'Foreclosure Access' && campaignId !== 'foreclosure-access' && campaignId !== 'default' ? content.hero.ctaText : field.value; %>
+          <% const value = field.type === 'hidden' ? (configuredValue || (field.name === 'neighborhood' ? content.neighborhood : '') || utm[field.name.replace('utm_', '')] || '') : ''; %>
+          <% if (field.type === 'hidden') { %>
+            <input type="hidden" name="<%= field.name %>" value="<%= value %>" data-utm-field="<%= field.name %>">
+          <% } else if (field.type === 'checkbox') { %>
+            <div class="tsrg-consent">
+              <input id="field-<%= field.name %>" type="checkbox" name="<%= field.name %>" value="yes" <%= field.required ? 'required' : '' %>>
+              <label for="field-<%= field.name %>"><%= content.listingGate.consentText %></label>
+              <p class="tsrg-field__error" data-error-for="<%= field.name %>"></p>
+            </div>
+          <% } else { %>
+            <div class="tsrg-field tsrg-field--<%= field.type %>">
+              <label for="field-<%= field.name %>"><%= field.label %><% if (field.required) { %><span aria-hidden="true">*</span><% } %></label>
+              <% if (field.type === 'select') { %>
+                <select id="field-<%= field.name %>" name="<%= field.name %>" <%= field.required ? 'required' : '' %>>
+                  <option value=""></option>
+                  <% (field.options || []).forEach(function(option) { %>
+                    <option value="<%= option %>"><%= option %></option>
+                  <% }); %>
+                </select>
+              <% } else if (field.type === 'textarea') { %>
+                <textarea id="field-<%= field.name %>" name="<%= field.name %>" rows="4" <%= field.required ? 'required' : '' %>></textarea>
+              <% } else { %>
+                <input id="field-<%= field.name %>" type="<%= field.type %>" name="<%= field.name %>" placeholder="<%= field.label %>" <%= field.required ? 'required' : '' %>>
+              <% } %>
+              <p class="tsrg-field__error" data-error-for="<%= field.name %>"></p>
+            </div>
+          <% } %>
+        <% }); %>
+        <input type="hidden" name="page_url" value="">
+        <input type="hidden" name="agent_notes" value="">
+        <button type="submit" class="tsrg-submit" data-submit-text="<%= content.form.submitText %>" data-loading-text="<%= content.form.submitText %>">
+          <span><%= content.form.submitText %></span>
+          <span class="material-symbols-outlined" aria-hidden="true">download</span>
+        </button>
+        <p class="tsrg-form-status" role="status" aria-live="polite"></p>
+        <p class="tsrg-secure-note"><span class="material-symbols-outlined" aria-hidden="true">security</span><%= content.listingGate.formSecureNote %></p>
+      </form>
+    </div>
+  </div>
+</section>

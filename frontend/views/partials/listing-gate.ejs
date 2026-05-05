@@ -1,0 +1,35 @@
+<section class="tsrg-listing-gate tsrg-container" aria-label="<%= content.listingGate.overlayCtaText %>">
+  <div class="tsrg-listing-grid">
+    <% content.listingGate.cards.forEach(function(card) { %>
+      <article class="tsrg-listing-card">
+        <div class="tsrg-listing-card__media">
+          <img class="tsrg-listing-card__image" src="<%= card.image %>" alt="<%= card.alt %>">
+          <span class="tsrg-listing-card__badge"><%= card.badge %></span>
+          <span class="material-symbols-outlined tsrg-listing-card__lock" aria-hidden="true">lock</span>
+        </div>
+        <div class="tsrg-listing-card__body">
+          <h2><%= card.title %></h2>
+          <div class="tsrg-listing-card__details">
+            <% card.details.forEach(function(detail) { %>
+              <span><%= detail %></span>
+            <% }); %>
+          </div>
+          <span class="tsrg-skeleton tsrg-skeleton--wide"></span>
+          <span class="tsrg-skeleton tsrg-skeleton--short"></span>
+        </div>
+      </article>
+    <% }); %>
+  </div>
+
+  <div class="tsrg-unlock-overlay">
+    <a
+      class="tsrg-cta-primary"
+      href="<%= content.listingGate.overlayCtaUrl %>"
+      data-cta-role="listing-overlay"
+      data-cta-text="<%= content.listingGate.overlayCtaText %>"
+    >
+      <span><%= content.listingGate.overlayCtaText %></span>
+      <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+    </a>
+  </div>
+</section>

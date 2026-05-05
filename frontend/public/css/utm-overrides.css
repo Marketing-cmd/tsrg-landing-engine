@@ -1,0 +1,15 @@
+body[data-campaign-id="senior-downsizing"] .tsrg-hero {
+  background-position: center;
+}
+
+body[data-campaign-id="investment-buyers"] .tsrg-feature-card__icon {
+  background: var(--color-accent);
+}
+
+body[data-campaign-id="seller"] .tsrg-trust {
+  background: color-mix(in srgb, var(--color-secondary), var(--color-primary) 22%);
+}
+
+body[data-campaign-id="home-evaluation"] .tsrg-proof {
+  background: color-mix(in srgb, var(--color-background), var(--color-accent) 8%);
+}

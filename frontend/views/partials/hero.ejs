@@ -1,0 +1,74 @@
+<header class="tsrg-urgency-bar">
+  <span><%= content.listingGate.urgencyText %></span>
+</header>
+
+<nav class="tsrg-topbar" aria-label="Main navigation">
+  <div class="tsrg-container tsrg-topbar__inner">
+    <a class="tsrg-topbar__brand" href="<%= (site.branding && site.branding.logoHref) || '/' %>">
+      <% if (site.branding && site.branding.logoPath) { %>
+        <img class="tsrg-topbar__logo" src="<%= site.branding.logoPath %>" alt="<%= site.branding.logoAlt || site.siteName %>">
+      <% } %>
+      <% if (!site.branding || site.branding.showWordmarkText) { %>
+        <span><%= content.listingGate.navBrand %></span>
+      <% } %>
+    </a>
+    <a
+      class="tsrg-topbar__button"
+      href="<%= content.listingGate.navCtaUrl %>"
+      data-cta-role="nav"
+      data-cta-text="<%= content.listingGate.navCtaText %>"
+    ><%= content.listingGate.navCtaText %></a>
+  </div>
+</nav>
+
+<section class="tsrg-hero">
+  <div class="tsrg-container tsrg-hero-content">
+    <% if (content.hero.agentPhoto || content.hero.agentName) { %>
+      <div class="tsrg-hero__agent">
+        <% if (content.hero.agentPhoto) { %>
+          <img class="tsrg-hero__agent-photo" src="<%= content.hero.agentPhoto %>" alt="<%= content.hero.agentName || 'Agent photo' %>">
+        <% } %>
+        <% if (content.hero.agentName) { %>
+          <div class="tsrg-hero__agent-info">
+            <strong><%= content.hero.agentName %></strong>
+            <% if (content.hero.agentTitle) { %><span><%= content.hero.agentTitle %></span><% } %>
+          </div>
+        <% } %>
+      </div>
+    <% } %>
+    <h1 data-swap-key="hero.h1"><%= content.hero.h1 %></h1>
+    <p class="tsrg-hero__subheadline" data-swap-key="hero.subheadline"><%= content.hero.subheadline %></p>
+    <div class="tsrg-hero__ctas">
+      <a
+        class="tsrg-cta-primary"
+        href="<%= content.hero.ctaUrl %>"
+        data-cta-role="hero-primary"
+        data-cta-text="<%= content.hero.ctaText %>"
+      >
+        <span><%= content.hero.ctaText %></span>
+        <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+      </a>
+      <% if (content.hero.ctaSecondaryText) { %>
+        <a
+          class="tsrg-cta-secondary"
+          href="<%= content.hero.ctaSecondaryUrl %>"
+          data-cta-role="hero-secondary"
+          data-cta-text="<%= content.hero.ctaSecondaryText %>"
+        >
+          <span class="material-symbols-outlined" aria-hidden="true">call</span>
+          <span><%= content.hero.ctaSecondaryText %></span>
+        </a>
+      <% } %>
+    </div>
+    <% if (content.hero.stats && content.hero.stats.length) { %>
+      <div class="tsrg-hero__stats" aria-label="Agent stats">
+        <% content.hero.stats.forEach(function(stat) { %>
+          <div class="tsrg-hero__stat">
+            <span class="tsrg-hero__stat-value"><%= stat.value %></span>
+            <span class="tsrg-hero__stat-label"><%= stat.label %></span>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+</section>

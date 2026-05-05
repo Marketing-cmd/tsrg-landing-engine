@@ -1,0 +1,19 @@
+{
+  "name": "tsrg-landing-engine",
+  "version": "1.0.0",
+  "description": "Config-driven Node.js + Express landing page system for The Smith Realty Group.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "verify:campaigns": "node scripts/verify-campaigns.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

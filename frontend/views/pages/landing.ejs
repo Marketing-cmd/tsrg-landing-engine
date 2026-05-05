@@ -1,0 +1,9 @@
+<main class="tsrg-page" data-content-campaign="<%= campaignId %>">
+  <%- include('../partials/hero', { content, campaignId, utm, site }) %>
+  <%- include('../partials/trust-badges', { content }) %>
+  <%- include('../partials/listing-gate', { content, campaignId, utm, site }) %>
+  <%- include('../partials/features', { content }) %>
+  <%- include('../partials/testimonials', { content }) %>
+  <%- include('../partials/lead-form', { content, campaignId, utm, site }) %>
+</main>
+<%- include('../partials/footer', { content, site }) %>

@@ -1,0 +1,96 @@
+<main class="tsrg-demo">
+  <section class="tsrg-demo__hero">
+    <div class="tsrg-container">
+      <h1>TSRG campaign demo dashboard</h1>
+      <p>Open sample links, submit test leads, and watch the resolver capture UTM intent and page variants.</p>
+      <div class="tsrg-demo__links">
+        <% (site.demoDashboard.sampleUrls || []).forEach(function(item) { %>
+          <a class="tsrg-demo__link" href="<%= item.url %>"><%= item.label %></a>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+
+  <section class="tsrg-demo__section">
+    <div class="tsrg-container tsrg-demo__grid">
+      <article class="tsrg-demo__panel">
+        <h2>Configured campaigns</h2>
+        <ul class="tsrg-demo__list">
+          <% (site.demoDashboard.campaigns || []).forEach(function(campaign) { %>
+            <li><code><%= campaign %></code></li>
+          <% }) %>
+        </ul>
+      </article>
+
+      <article class="tsrg-demo__panel">
+        <h2>Live counts</h2>
+        <div class="tsrg-demo__stats">
+          <div>
+            <strong><%= demoData && demoData.counts ? demoData.counts.visits : 0 %></strong>
+            <span>tracked visits</span>
+          </div>
+          <div>
+            <strong><%= demoData && demoData.counts ? demoData.counts.leads : 0 %></strong>
+            <span>tracked leads</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="tsrg-demo__section">
+    <div class="tsrg-container tsrg-demo__grid tsrg-demo__grid--stack">
+      <article class="tsrg-demo__panel">
+        <h2>Recent visits</h2>
+        <% if (demoData && demoData.visits && demoData.visits.length) { %>
+          <div class="tsrg-demo__table">
+            <% demoData.visits.forEach(function(visit) { %>
+              <div class="tsrg-demo__row">
+                <div>
+                  <strong><%= visit.campaignId %></strong>
+                  <p><%= visit.resolvedTitle %></p>
+                </div>
+                <div>
+                  <span><%= visit.neighborhood || 'No neighborhood' %></span>
+                  <code><%= visit.path %></code>
+                </div>
+                <div>
+                  <span><%= visit.utm.source || 'direct' %> / <%= visit.utm.medium || 'none' %></span>
+                  <time><%= visit.visitedAt %></time>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } else { %>
+          <p class="tsrg-demo__empty">No visits tracked yet. Open one of the sample links above.</p>
+        <% } %>
+      </article>
+
+      <article class="tsrg-demo__panel">
+        <h2>Recent leads</h2>
+        <% if (demoData && demoData.leads && demoData.leads.length) { %>
+          <div class="tsrg-demo__table">
+            <% demoData.leads.forEach(function(lead) { %>
+              <div class="tsrg-demo__row">
+                <div>
+                  <strong><%= lead.name || 'Unnamed lead' %></strong>
+                  <p><%= lead.interest || 'No interest set' %></p>
+                </div>
+                <div>
+                  <span><%= lead.campaignId %></span>
+                  <code><%= lead.neighborhood || 'No neighborhood' %></code>
+                </div>
+                <div>
+                  <span><%= lead.email || 'No email' %></span>
+                  <time><%= lead.submittedAt %></time>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } else { %>
+          <p class="tsrg-demo__empty">No leads tracked yet. Submit the live form on any campaign page.</p>
+        <% } %>
+      </article>
+    </div>
+  </section>
+</main>

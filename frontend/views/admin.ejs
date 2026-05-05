@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Content Editor — TSRG</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; font-size: 14px; background: #f1f5f9; color: #1e293b; }
+    a { color: inherit; text-decoration: none; }
+
+    /* Layout */
+    .adm-layout { display: flex; min-height: 100vh; }
+    .adm-sidebar { width: 220px; flex-shrink: 0; background: #0f172a; color: #cbd5e1; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+    .adm-main { flex: 1; padding: 32px; max-width: 900px; }
+
+    /* Sidebar */
+    .adm-sidebar__logo { padding: 20px 16px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .adm-sidebar__logo strong { display: block; color: #f8fafc; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .adm-sidebar__logo span { font-size: 11px; color: #64748b; margin-top: 2px; display: block; }
+    .adm-sidebar__label { padding: 18px 16px 6px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #475569; font-weight: 700; }
+    .adm-sidebar__item { display: block; padding: 9px 16px; font-size: 13px; color: #94a3b8; cursor: pointer; border-left: 3px solid transparent; transition: all 120ms; }
+    .adm-sidebar__item:hover { color: #f1f5f9; background: rgba(255,255,255,0.04); }
+    .adm-sidebar__item.active { color: #f8fafc; background: rgba(255,255,255,0.07); border-left-color: #3b82f6; }
+    .adm-sidebar__item em { display: block; font-style: normal; font-size: 10px; color: #475569; margin-top: 1px; }
+    .adm-sidebar__footer { margin-top: auto; padding: 16px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 11px; color: #475569; }
+    .adm-sidebar__footer a { color: #60a5fa; }
+
+    /* Header */
+    .adm-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+    .adm-header h1 { font-size: 20px; font-weight: 700; color: #0f172a; }
+    .adm-header p { font-size: 13px; color: #64748b; margin-top: 2px; }
+    .adm-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; background: #dbeafe; color: #1d4ed8; }
+
+    /* Cards */
+    .adm-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+    .adm-card__head { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid #f1f5f9; cursor: pointer; user-select: none; }
+    .adm-card__head h2 { font-size: 14px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 8px; }
+    .adm-card__head h2 span { font-size: 16px; }
+    .adm-card__chevron { color: #94a3b8; font-size: 12px; transition: transform 180ms; }
+    .adm-card.open .adm-card__chevron { transform: rotate(180deg); }
+    .adm-card__body { padding: 20px; display: none; }
+    .adm-card.open .adm-card__body { display: block; }
+
+    /* Fields */
+    .adm-row { display: grid; gap: 16px; margin-bottom: 16px; }
+    .adm-row.cols2 { grid-template-columns: 1fr 1fr; }
+    .adm-row.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+    .adm-field { display: flex; flex-direction: column; gap: 5px; }
+    .adm-field label { font-size: 12px; font-weight: 600; color: #374151; text-transform: uppercase; letter-spacing: 0.04em; }
+    .adm-field input[type="text"],
+    .adm-field input[type="url"],
+    .adm-field textarea {
+      width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px;
+      font: inherit; font-size: 13px; color: #1e293b; background: #f8fafc;
+      transition: border-color 150ms;
+    }
+    .adm-field input:focus, .adm-field textarea:focus { outline: none; border-color: #3b82f6; background: #fff; }
+    .adm-field textarea { resize: vertical; min-height: 72px; }
+    .adm-field input[type="color"] { width: 52px; height: 36px; padding: 2px 3px; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer; background: #fff; }
+    .adm-field .adm-color-row { display: flex; align-items: center; gap: 8px; }
+    .adm-field .adm-color-row input[type="text"] { flex: 1; font-family: monospace; }
+    .adm-hint { font-size: 11px; color: #94a3b8; }
+
+    /* Repeating items */
+    .adm-repeat { display: grid; gap: 16px; }
+    .adm-repeat-item { border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; background: #fafafa; }
+    .adm-repeat-item__label { font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+
+    /* Actions */
+    .adm-actions { display: flex; align-items: center; gap: 10px; padding-top: 16px; border-top: 1px solid #f1f5f9; margin-top: 4px; }
+    .adm-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 6px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 120ms; }
+    .adm-btn--primary { background: #2563eb; color: #fff; }
+    .adm-btn--primary:hover { background: #1d4ed8; }
+    .adm-btn--danger { background: #fee2e2; color: #991b1b; }
+    .adm-btn--danger:hover { background: #fecaca; }
+    .adm-btn--ghost { background: #f1f5f9; color: #374151; border: 1px solid #e2e8f0; }
+    .adm-btn--ghost:hover { background: #e2e8f0; }
+    .adm-btn:disabled { opacity: 0.5; cursor: wait; }
+
+    /* Toast */
+    #adm-toast { position: fixed; bottom: 28px; right: 28px; z-index: 999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+    .adm-toast-msg { padding: 12px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; color: #fff; opacity: 0; transform: translateY(8px); transition: all 250ms; pointer-events: none; max-width: 320px; }
+    .adm-toast-msg.show { opacity: 1; transform: translateY(0); }
+    .adm-toast-msg.success { background: #16a34a; }
+    .adm-toast-msg.error { background: #dc2626; }
+
+    /* Campaign label map */
+    .adm-preview-link { font-size: 12px; color: #3b82f6; }
+
+    @media (max-width: 700px) {
+      .adm-layout { flex-direction: column; }
+      .adm-sidebar { width: 100%; height: auto; position: static; flex-direction: row; flex-wrap: wrap; }
+      .adm-main { padding: 16px; }
+      .adm-row.cols2, .adm-row.cols3 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="adm-layout">
+
+  <!-- Sidebar -->
+  <aside class="adm-sidebar">
+    <div class="adm-sidebar__logo">
+      <strong>TSRG Admin</strong>
+      <span>Content Editor</span>
+    </div>
+    <div class="adm-sidebar__label">Campaigns</div>
+    <% campaignIds.forEach(function(id) { %>
+      <a class="adm-sidebar__item <%= id === 'default' ? 'active' : '' %>" data-campaign="<%= id %>" onclick="selectCampaign('<%= id %>')">
+        <%= id === 'default' ? 'Default / Fallback' : id %>
+        <em><%= id === 'default' ? 'Base content for all' : (campaigns[id].intentSegment || '') %></em>
+      </a>
+    <% }); %>
+    <div class="adm-sidebar__footer">
+      <a href="/" target="_blank">↗ View live site</a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="adm-main">
+    <div class="adm-header">
+      <div>
+        <h1 id="adm-title">Default / Fallback</h1>
+        <p id="adm-subtitle">Editing base content — changes apply to all campaigns unless overridden.</p>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <a id="adm-preview-link" class="adm-preview-link" href="/" target="_blank">↗ Preview</a>
+        <button class="adm-btn adm-btn--danger" onclick="resetCampaign()">Reset to defaults</button>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <div class="adm-card open" id="card-hero">
+      <div class="adm-card__head" onclick="toggleCard('hero')">
+        <h2><span>🏠</span> Hero Section</h2>
+        <span class="adm-card__chevron">▼</span>
+      </div>
+      <div class="adm-card__body">
+        <div class="adm-row">
+          <div class="adm-field">
+            <label>Headline (H1)</label>
+            <textarea id="hero.h1" rows="2"></textarea>
+            <span class="adm-hint">Use {{term}} to insert the UTM term or neighbourhood fallback</span>
+          </div>
+        </div>
+        <div class="adm-row">
+          <div class="adm-field">
+            <label>Subheadline</label>
+            <textarea id="hero.subheadline" rows="2"></textarea>
+          </div>
+        </div>
+        <div class="adm-row cols2">
+          <div class="adm-field">
+            <label>Primary CTA Text</label>
+            <input type="text" id="hero.ctaText">
+          </div>
+          <div class="adm-field">
+            <label>Primary CTA URL</label>
+            <input type="text" id="hero.ctaUrl">
+          </div>
+        </div>
+        <div class="adm-row cols2">
+          <div class="adm-field">
+            <label>Secondary CTA Text</label>
+            <input type="text" id="hero.ctaSecondaryText">
+          </div>
+          <div class="adm-field">
+            <label>Secondary CTA URL</label>
+            <input type="text" id="hero.ctaSecondaryUrl">
+          </div>
+        </div>
+        <div class="adm-row cols2">
+          <div class="adm-field">
+            <label>Agent Name</label>
+            <input type="text" id="hero.agentName">
+          </div>
+          <div class="adm-field">
+            <label>Agent Title</label>
+            <input type="text" id="hero.agentTitle">
+          </div>
+        </div>
+        <div class="adm-actions">
+          <button class="adm-btn adm-btn--primary" onclick="saveSection('hero', ['h1','subheadline','ctaText','ctaUrl','ctaSecondaryText','ctaSecondaryUrl','agentName','agentTitle'])">Save Hero</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Listing Gate -->
+    <div class="adm-card" id="card-listingGate">
+      <div class="adm-card__head" onclick="toggleCard('listingGate')">
+        <h2><span>🔒</span> Listing Gate</h2>
+        <span class="adm-card__chevron">▼</span>
+      </div>
+      <div class="adm-card__body">
+        <div class="adm-row cols2">
+          <div class="adm-field">
+            <label>Urgency Bar Text</label>
+            <input type="text" id="listingGate.urgencyText">
+          </div>
+          <div class="adm-field">
+            <label>Overlay CTA Text</label>
+            <input type="text" id="listingGate.overlayCtaText">
+          </div>
+        </div>
+        <div class="adm-row cols2">
+          <div class="adm-field">
+            <label>Nav Brand Name</label>
+            <input type="text" id="listingGate.navBrand">
+          </div>
+          <div class="adm-field">
+            <label>Nav CTA Text</label>
+            <input type="text" id="listingGate.navCtaText">
+          </div>
+        </div>
+        <div class="adm-row">
+          <div class="adm-field">
+            <label>Consent Text</label>
+            <textarea id="listingGate.consentText" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="adm-actions">
+          <button class="adm-btn adm-btn--primary" onclick="saveSection('listingGate', ['urgencyText','overlayCtaText','navBrand','navCtaText','consentText'])">Save Listing Gate</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="adm-card" id="card-form">
+      <div class="adm-card__head" onclick="toggleCard('form')">
+        <h2><span>📋</span> Lead Form</h2>
+        <span class="adm-card__chevron">▼</span>
+      </div>
+      <div class="adm-card__body">
+        <div class="adm-row cols2">
+          <div class="adm-field">
+            <label>Form Headline</label>
+            <input type="text" id="form.headline">
+          </div>
+          <div class="adm-field">
+            <label>Submit Button Text</label>
+            <input type="text" id="form.submitText">
+          </div>
+        </div>
+        <div class="adm-row">
+          <div class="adm-field">
+            <label>Form Subheadline</label>
+            <textarea id="form.subheadline" rows="2"></textarea>
+          </div>
+        </div>
+        <div class="adm-row">
+          <div class="adm-field">
+            <label>Success Message (shown after submit)</label>
+            <textarea id="form.successMessage" rows="2"></textarea>
+          </div>
+        </div>
+        <div class="adm-actions">
+          <button class="adm-btn adm-btn--primary" onclick="saveSection('form', ['headline','subheadline','submitText','successMessage'])">Save Form</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="adm-card" id="card-features">
+      <div class="adm-card__head" onclick="toggleCard('features')">
+        <h2><span>✨</span> Benefits / Features</h2>
+        <span class="adm-card__chevron">▼</span>
+      </div>
+      <div class="adm-card__body">
+        <div class="adm-repeat" id="features-list"></div>
+        <div class="adm-actions">
+          <button class="adm-btn adm-btn--primary" onclick="saveFeatures()">Save Features</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Testimonials -->
+    <div class="adm-card" id="card-socialProof">
+      <div class="adm-card__head" onclick="toggleCard('socialProof')">
+        <h2><span>💬</span> Testimonials</h2>
+        <span class="adm-card__chevron">▼</span>
+      </div>
+      <div class="adm-card__body">
+        <div class="adm-row">
+          <div class="adm-field">
+            <label>Section Headline</label>
+            <input type="text" id="socialProof.headline">
+          </div>
+        </div>
+        <div class="adm-repeat" id="testimonials-list"></div>
+        <div class="adm-actions">
+          <button class="adm-btn adm-btn--primary" onclick="saveTestimonials()">Save Testimonials</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trust Badges -->
+    <div class="adm-card" id="card-trustBadges">
+      <div class="adm-card__head" onclick="toggleCard('trustBadges')">
+        <h2><span>🏅</span> Trust Badges</h2>
+        <span class="adm-card__chevron">▼</span>
+      </div>
+      <div class="adm-card__body">
+        <div class="adm-row">
+          <div class="adm-field">
+            <label>Badge 1</label>
+            <input type="text" id="trustBadge.0">
+          </div>
+          <div class="adm-field">
+            <label>Badge 2</label>
+            <input type="text" id="trustBadge.1">
+          </div>
+          <div class="adm-field">
+            <label>Badge 3</label>
+            <input type="text" id="trustBadge.2">
+          </div>
+        </div>
+        <div class="adm-actions">
+          <button class="adm-btn adm-btn--primary" onclick="saveTrustBadges()">Save Trust Badges</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Colors -->
+    <div class="adm-card" id="card-colors">
+      <div class="adm-card__head" onclick="toggleCard('colors')">
+        <h2><span>🎨</span> Campaign Colors</h2>
+        <span class="adm-card__chevron">▼</span>
+      </div>
+      <div class="adm-card__body">
+        <div class="adm-row cols3">
+          <% ['primary','secondary','accent','text','background'].forEach(function(c) { %>
+          <div class="adm-field">
+            <label><%= c %></label>
+            <div class="adm-color-row">
+              <input type="color" id="colors.<%= c %>.picker" oninput="document.getElementById('colors.<%= c %>').value=this.value">
+              <input type="text" id="colors.<%= c %>" placeholder="#000000" oninput="syncColorPicker('<%= c %>')">
+            </div>
+          </div>
+          <% }); %>
+        </div>
+        <div class="adm-actions">
+          <button class="adm-btn adm-btn--primary" onclick="saveColors()">Save Colors</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Meta -->
+    <div class="adm-card" id="card-meta">
+      <div class="adm-card__head" onclick="toggleCard('meta')">
+        <h2><span>🔖</span> Page Meta</h2>
+        <span class="adm-card__chevron">▼</span>
+      </div>
+      <div class="adm-card__body">
+        <div class="adm-row">
+          <div class="adm-field">
+            <label>Page Title</label>
+            <input type="text" id="meta.title">
+            <span class="adm-hint">Use {{term}} to inject neighbourhood name</span>
+          </div>
+        </div>
+        <div class="adm-row">
+          <div class="adm-field">
+            <label>Meta Description</label>
+            <textarea id="meta.description" rows="2"></textarea>
+          </div>
+        </div>
+        <div class="adm-actions">
+          <button class="adm-btn adm-btn--primary" onclick="saveSection('meta', ['title','description'])">Save Meta</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Toast container -->
+<div id="adm-toast"></div>
+
+<script>
+  const CAMPAIGNS = <%- JSON.stringify(campaigns).replace(/</g, '\\u003c') %>;
+  let currentId = 'default';
+
+  const LABELS = {
+    default: 'Default / Fallback',
+    'foreclosure-access': 'Foreclosure Access',
+    'senior-downsizing': 'Senior Downsizing',
+    'investment-buyers': 'Investment Buyers',
+    'first-time-buyer': 'First-Time Buyer',
+    seller: 'Seller',
+    'home-evaluation': 'Home Evaluation'
+  };
+
+  const PREVIEW_PATHS = {
+    default: '/',
+    'foreclosure-access': '/?utm_campaign=foreclosure&utm_term=Etobicoke',
+    'senior-downsizing': '/?utm_campaign=senior&utm_term=The+Kingsway',
+    'investment-buyers': '/?utm_campaign=investment&utm_term=High+Park',
+    'first-time-buyer': '/?utm_campaign=first-time&utm_term=Islington',
+    seller: '/?utm_campaign=seller&utm_term=Etobicoke',
+    'home-evaluation': '/?utm_campaign=valuation&utm_term=Humber+Valley'
+  };
+
+  function val(id) {
+    const el = document.getElementById(id);
+    return el ? el.value : '';
+  }
+
+  function set(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.value = value || '';
+  }
+
+  function get(obj, path) {
+    return path.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : ''), obj);
+  }
+
+  function toggleCard(section) {
+    const card = document.getElementById('card-' + section);
+    if (card) card.classList.toggle('open');
+  }
+
+  function syncColorPicker(colorKey) {
+    const textInput = document.getElementById('colors.' + colorKey);
+    const picker = document.getElementById('colors.' + colorKey + '.picker');
+    if (picker && textInput.value.match(/^#[0-9a-fA-F]{6}$/)) {
+      picker.value = textInput.value;
+    }
+  }
+
+  function selectCampaign(id) {
+    currentId = id;
+    document.querySelectorAll('.adm-sidebar__item').forEach(el => {
+      el.classList.toggle('active', el.dataset.campaign === id);
+    });
+
+    const c = CAMPAIGNS[id] || {};
+    const label = LABELS[id] || id;
+    document.getElementById('adm-title').textContent = label;
+    document.getElementById('adm-subtitle').textContent =
+      id === 'default' ? 'Base content — applies to all campaigns unless overridden.' :
+      'Overrides base content for utm_campaign=' + id + ' traffic.';
+    document.getElementById('adm-preview-link').href = PREVIEW_PATHS[id] || '/';
+
+    // Hero
+    set('hero.h1', get(c, 'hero.h1'));
+    set('hero.subheadline', get(c, 'hero.subheadline'));
+    set('hero.ctaText', get(c, 'hero.ctaText'));
+    set('hero.ctaUrl', get(c, 'hero.ctaUrl'));
+    set('hero.ctaSecondaryText', get(c, 'hero.ctaSecondaryText'));
+    set('hero.ctaSecondaryUrl', get(c, 'hero.ctaSecondaryUrl'));
+    set('hero.agentName', get(c, 'hero.agentName'));
+    set('hero.agentTitle', get(c, 'hero.agentTitle'));
+
+    // Listing gate
+    set('listingGate.urgencyText', get(c, 'listingGate.urgencyText'));
+    set('listingGate.overlayCtaText', get(c, 'listingGate.overlayCtaText'));
+    set('listingGate.navBrand', get(c, 'listingGate.navBrand'));
+    set('listingGate.navCtaText', get(c, 'listingGate.navCtaText'));
+    set('listingGate.consentText', get(c, 'listingGate.consentText'));
+
+    // Form
+    set('form.headline', get(c, 'form.headline'));
+    set('form.subheadline', get(c, 'form.subheadline'));
+    set('form.submitText', get(c, 'form.submitText'));
+    set('form.successMessage', get(c, 'form.successMessage'));
+
+    // Features
+    const featuresList = document.getElementById('features-list');
+    featuresList.innerHTML = '';
+    (c.features || []).forEach(function(f, i) {
+      featuresList.innerHTML += `
+        <div class="adm-repeat-item">
+          <div class="adm-repeat-item__label">Feature ${i + 1}</div>
+          <div class="adm-row cols2">
+            <div class="adm-field"><label>Title</label><input type="text" id="feature.${i}.title" value="${(f.title||'').replace(/"/g,'&quot;')}"></div>
+            <div class="adm-field"><label>Icon (Material Symbol name)</label><input type="text" id="feature.${i}.icon" value="${(f.icon||'').replace(/"/g,'&quot;')}"></div>
+          </div>
+          <div class="adm-field"><label>Description</label><textarea id="feature.${i}.description" rows="2">${f.description||''}</textarea></div>
+        </div>`;
+    });
+
+    // Testimonials
+    set('socialProof.headline', get(c, 'socialProof.headline'));
+    const testList = document.getElementById('testimonials-list');
+    testList.innerHTML = '';
+    ((c.socialProof && c.socialProof.testimonials) || []).forEach(function(t, i) {
+      testList.innerHTML += `
+        <div class="adm-repeat-item">
+          <div class="adm-repeat-item__label">Testimonial ${i + 1}</div>
+          <div class="adm-field" style="margin-bottom:10px"><label>Quote</label><textarea id="testimonial.${i}.quote" rows="2">${t.quote||''}</textarea></div>
+          <div class="adm-row cols2">
+            <div class="adm-field"><label>Name</label><input type="text" id="testimonial.${i}.author" value="${(t.author||'').replace(/"/g,'&quot;')}"></div>
+            <div class="adm-field"><label>Location</label><input type="text" id="testimonial.${i}.location" value="${(t.location||'').replace(/"/g,'&quot;')}"></div>
+          </div>
+        </div>`;
+    });
+
+    // Trust badges
+    (c.trustBadges || []).forEach(function(badge, i) {
+      set('trustBadge.' + i, badge);
+    });
+
+    // Colors
+    ['primary','secondary','accent','text','background'].forEach(function(k) {
+      const hex = get(c, 'colors.' + k);
+      set('colors.' + k, hex);
+      const picker = document.getElementById('colors.' + k + '.picker');
+      if (picker && hex.match(/^#[0-9a-fA-F]{6}$/)) picker.value = hex;
+    });
+
+    // Meta
+    set('meta.title', get(c, 'meta.title'));
+    set('meta.description', get(c, 'meta.description'));
+  }
+
+  async function saveSection(section, fields) {
+    const data = {};
+    fields.forEach(function(f) {
+      data[f] = val(section + '.' + f);
+    });
+    await post({ campaignId: currentId, section, data });
+  }
+
+  async function saveFeatures() {
+    const c = CAMPAIGNS[currentId] || {};
+    const count = (c.features || []).length;
+    const features = [];
+    for (let i = 0; i < count; i++) {
+      features.push({
+        icon: val('feature.' + i + '.icon'),
+        title: val('feature.' + i + '.title'),
+        description: val('feature.' + i + '.description')
+      });
+    }
+    await post({ campaignId: currentId, section: 'features', data: features });
+  }
+
+  async function saveTestimonials() {
+    const c = CAMPAIGNS[currentId] || {};
+    const count = ((c.socialProof && c.socialProof.testimonials) || []).length;
+    const testimonials = [];
+    for (let i = 0; i < count; i++) {
+      testimonials.push({
+        quote: val('testimonial.' + i + '.quote'),
+        author: val('testimonial.' + i + '.author'),
+        location: val('testimonial.' + i + '.location')
+      });
+    }
+    await post({
+      campaignId: currentId,
+      section: 'socialProof',
+      data: { headline: val('socialProof.headline'), testimonials }
+    });
+  }
+
+  async function saveTrustBadges() {
+    const c = CAMPAIGNS[currentId] || {};
+    const badges = (c.trustBadges || []).map(function(_, i) { return val('trustBadge.' + i); });
+    await post({ campaignId: currentId, section: 'trustBadges', data: badges });
+  }
+
+  async function saveColors() {
+    const data = {};
+    ['primary','secondary','accent','text','background'].forEach(function(k) {
+      data[k] = val('colors.' + k);
+    });
+    await post({ campaignId: currentId, section: 'colors', data });
+  }
+
+  async function resetCampaign() {
+    if (!confirm('Reset all overrides for "' + (LABELS[currentId] || currentId) + '"? This cannot be undone.')) return;
+    try {
+      const r = await fetch('/admin/api/reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ campaignId: currentId })
+      });
+      const d = await r.json();
+      if (d.success) { toast('Reset successfully. Reload to see defaults.', 'success'); }
+      else toast(d.error || 'Reset failed.', 'error');
+    } catch (e) { toast('Network error.', 'error'); }
+  }
+
+  async function post(payload) {
+    const btns = document.querySelectorAll('.adm-btn--primary');
+    btns.forEach(b => b.disabled = true);
+    try {
+      const r = await fetch('/admin/api/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const d = await r.json();
+      if (d.success) toast('Saved successfully!', 'success');
+      else toast(d.error || 'Save failed.', 'error');
+    } catch (e) {
+      toast('Network error.', 'error');
+    } finally {
+      btns.forEach(b => b.disabled = false);
+    }
+  }
+
+  function toast(msg, type) {
+    const container = document.getElementById('adm-toast');
+    const el = document.createElement('div');
+    el.className = 'adm-toast-msg ' + type;
+    el.textContent = msg;
+    container.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('show'));
+    setTimeout(() => {
+      el.classList.remove('show');
+      setTimeout(() => el.remove(), 300);
+    }, 3000);
+  }
+
+  // Init with default campaign
+  selectCampaign('default');
+</script>
+</body>
+</html>

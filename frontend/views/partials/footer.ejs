@@ -1,0 +1,34 @@
+<footer class="tsrg-footer">
+  <div class="tsrg-container tsrg-footer__row">
+    <a class="tsrg-footer__brand" href="<%= (site.branding && site.branding.logoHref) || '/' %>">
+      <% if (site.branding && site.branding.logoPath) { %>
+        <img class="tsrg-footer__logo" src="<%= site.branding.logoPath %>" alt="<%= site.branding.logoAlt || site.siteName %>">
+      <% } %>
+      <% if (!site.branding || site.branding.showWordmarkText) { %>
+        <span><%= content.listingGate.footerBrand %></span>
+      <% } %>
+    </a>
+    <nav aria-label="Footer">
+      <a href="<%= site.phoneHref %>"><span class="material-symbols-outlined" aria-hidden="true">call</span><%= site.phone %></a>
+      <a href="mailto:<%= site.email %>"><span class="material-symbols-outlined" aria-hidden="true">email</span><%= site.email %></a>
+    </nav>
+  </div>
+  <% if (site.compliance) { %>
+  <div class="tsrg-footer__legal">
+    <div class="tsrg-container">
+      <p class="tsrg-footer__brokerage">
+        <%= site.compliance.brokerageName %> &mdash; <%= site.compliance.brokerageAddress %>
+        <% if (site.compliance.recoNumber) { %> &mdash; <%= site.compliance.recoNumber %><% } %>
+      </p>
+      <p class="tsrg-footer__disclaimer"><%= site.compliance.legalDisclaimer %></p>
+      <p class="tsrg-footer__copyright">&copy; <%= new Date().getFullYear() %> <%= content.listingGate.footerLegal %></p>
+    </div>
+  </div>
+  <% } else { %>
+  <div class="tsrg-footer__legal">
+    <div class="tsrg-container">
+      <p class="tsrg-footer__copyright">&copy; <%= new Date().getFullYear() %> <%= content.listingGate.footerLegal %></p>
+    </div>
+  </div>
+  <% } %>
+</footer>

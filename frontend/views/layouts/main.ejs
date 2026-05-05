@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= content.meta.title %></title>
+    <meta name="description" content="<%= content.meta.description %>">
+    <meta property="og:title" content="<%= content.meta.title %>">
+    <meta property="og:description" content="<%= content.meta.description %>">
+    <meta property="og:image" content="<%= content.meta.ogImage %>">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="<%= content.colors.primary %>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/utm-overrides.css">
+    <% (site.customCssFiles || []).forEach(function(file) { %>
+      <link rel="stylesheet" href="<%= file %>">
+    <% }) %>
+
+    <style>
+      <%- content.cssVariables %>
+    </style>
+    <% if (site.googleTags && site.googleTags.headCode) { %>
+      <%- site.googleTags.headCode %>
+    <% } %>
+
+    <% if (site.ga4Id) { %>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=<%= site.ga4Id %>"></script>
+    <% } %>
+    <script>
+      window.TSRG_SITE = {
+        ga4Id: '<%= site.ga4Id %>',
+        phoneHref: '<%= site.phoneHref %>',
+        campaignId: '<%= campaignId %>',
+        branding: <%- JSON.stringify(site.branding || {}).replace(/</g, '\\u003c') %>,
+        googleTags: <%- JSON.stringify(site.googleTags || {}).replace(/</g, '\\u003c') %>
+      };
+      window.TSRG_CONTENT = <%- JSON.stringify({
+        campaignId: campaignId,
+        successMessage: content.form.successMessage,
+        intentSegment: content.intentSegment || 'general'
+      }).replace(/</g, '\\u003c') %>;
+      window.TSRG_UTM = <%- utmJson %>;
+      window.dataLayer = window.dataLayer || [];
+      dataLayer.push({
+        'event': 'page_view',
+        'campaign_id': '<%= campaignId %>',
+        'utm_source': '<%= utm.source %>',
+        'utm_medium': '<%= utm.medium %>',
+        'utm_campaign': '<%= utm.campaign %>',
+        'page_location': window.location.href,
+        'user_intent_segment': '<%= content.intentSegment || "general" %>'
+      });
+    </script>
+  </head>
+  <body class="tsrg-app" data-campaign-id="<%= campaignId %>" data-intent-segment="<%= content.intentSegment || 'general' %>">
+    <% if (site.googleTags && site.googleTags.bodyStartCode) { %>
+      <%- site.googleTags.bodyStartCode %>
+    <% } %>
+    <%- include('../pages/' + page, { content, campaignId, utm, site }) %>
+
+    <script src="/js/utmTracker.js" defer></script>
+    <script src="/js/ga4Events.js" defer></script>
+    <script src="/js/contentSwapper.js" defer></script>
+    <script src="/js/formHandler.js" defer></script>
+    <% if (site.googleTags && site.googleTags.bodyEndCode) { %>
+      <%- site.googleTags.bodyEndCode %>
+    <% } %>
+  </body>
+</html>
