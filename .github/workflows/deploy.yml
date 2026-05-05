@@ -4,10 +4,13 @@ on:
   push:
     branches: [main]
 
+# Deployment is handled by Railway (connected to this GitHub repo).
+# This workflow only activates when you move to a self-hosted VPS later.
+# Add DEPLOY_HOST, DEPLOY_USER, DEPLOY_KEY, DEPLOY_PATH secrets to enable it.
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # Only runs when DEPLOY_HOST secret is set — safe to push without a server
     if: ${{ secrets.DEPLOY_HOST != '' }}
     steps:
       - name: Deploy to server via SSH
