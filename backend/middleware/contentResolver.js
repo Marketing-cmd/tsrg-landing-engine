@@ -130,7 +130,7 @@ function cssVariables(colors = {}) {
   `;
 }
 
-module.exports = function contentResolver(req, res, next) {
+module.exports = async function contentResolver(req, res, next) {
   const campaignId = findCampaignId(res.locals.utm);
   const campaign = contentConfig.campaigns[campaignId] || {};
   let content = deepMerge(contentConfig.default, campaign);
@@ -139,7 +139,7 @@ module.exports = function contentResolver(req, res, next) {
     content.hero = deepMerge(content.hero, campaign.dynamicInject);
   }
 
-  const overrides = contentOverrides.load();
+  const overrides = await contentOverrides.load();
   const defaultOverrides = overrides['default'] || {};
   const campaignOverrides = overrides[campaignId] || {};
   content = deepMerge(content, deepMerge(defaultOverrides, campaignOverrides));

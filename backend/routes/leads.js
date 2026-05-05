@@ -1,5 +1,6 @@
 const { parseCookies, buildUtmObject, COOKIE_NAME } = require('../middleware/utmParser');
 const demoStore = require('../lib/demoStore');
+const db = require('../lib/db');
 
 function readCookieUtm(req) {
   const cookies = parseCookies(req.headers.cookie);
@@ -159,7 +160,39 @@ module.exports = function leadRoutes(siteConfig) {
       return res.status(400).json({ success: false, error: 'Please enter a valid email address.' });
     }
 
+    let dbLeadId = null;
+
     try {
+      // ── Save to database first ────────────────────────────────────────────
+      if (db.isEnabled()) {
+        const { rows } = await db.query(
+          `INSERT INTO leads (
+            campaign_id, name, email, phone, lead_score, pipeline_stage,
+            utm_source, utm_medium, utm_campaign, utm_term, utm_content,
+            neighborhood, timeline, budget, financing, property_address,
+            bedrooms, reason, situation, already_listed, interest, page_url,
+            zapier_status, raw
+          ) VALUES (
+            $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,'pending',$23
+          ) RETURNING id`,
+          [
+            campaignId,
+            payload.name,       payload.email,      payload.phone,
+            leadScore,          payload.pipelineStage,
+            payload.utm_source, payload.utm_medium,  payload.utm_campaign,
+            payload.utm_term,   payload.utm_content,
+            payload.neighborhood,
+            payload.timeline,   payload.budget,     payload.financing,
+            payload.propertyAddress, payload.bedrooms, payload.reason,
+            payload.situation,  payload.alreadyListed, payload.interest,
+            payload.page_url,
+            JSON.stringify(payload),
+          ]
+        );
+        dbLeadId = rows[0].id;
+      }
+
+      // ── Mirror to in-memory demo store ───────────────────────────────────
       demoStore.recordLead({
         submittedAt:  payload.submitted_at,
         campaignId,
@@ -179,13 +212,24 @@ module.exports = function leadRoutes(siteConfig) {
         status: 'forwarding',
       });
 
+      // ── Forward to Zapier ─────────────────────────────────────────────────
       const response = await fetch(siteConfig.zapierWebhook, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify(payload),
       });
 
-      if (!response.ok) throw new Error(`Zapier returned ${response.status}`);
+      const zapierOk = response.ok;
+      if (!zapierOk) console.warn('[lead] Zapier returned', response.status);
+
+      if (dbLeadId) {
+        await db.query(
+          'UPDATE leads SET zapier_status = $1 WHERE id = $2',
+          [zapierOk ? 'sent' : 'zapier_error', dbLeadId]
+        );
+      }
+
+      if (!zapierOk) throw new Error(`Zapier returned ${response.status}`);
 
       res.json({ success: true, leadScore });
     } catch (error) {

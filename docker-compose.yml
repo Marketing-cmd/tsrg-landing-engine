@@ -6,11 +6,28 @@ services:
       - "3000:3000"
     env_file:
       - .env
+    environment:
+      DATABASE_URL: postgres://tsrg:${DB_PASSWORD}@db:5432/tsrg
     volumes:
       - ./content-overrides.json:/app/content-overrides.json
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tsrg
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: tsrg
+    volumes:
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
-      interval: 30s
+      test: ["CMD-SHELL", "pg_isready -U tsrg"]
+      interval: 10s
       timeout: 5s
-      retries: 3
-      start_period: 10s
+      retries: 5
+
+volumes:
+  pgdata:

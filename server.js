@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const path = require('path');
 const express = require('express');
+const { runMigrations } = require('./backend/lib/migrations');
 const siteConfig = require('./backend/config/siteConfig');
 const utmParser = require('./backend/middleware/utmParser');
 const contentResolver = require('./backend/middleware/contentResolver');
@@ -35,6 +36,6 @@ app.use((req, res) => {
   res.redirect(302, '/');
 });
 
-app.listen(PORT, () => {
-  console.log(`TSRG landing engine running on http://localhost:${PORT}`);
-});
+runMigrations()
+  .then(() => app.listen(PORT, () => console.log(`TSRG landing engine running on http://localhost:${PORT}`)))
+  .catch((err) => { console.error('Startup failed:', err.message); process.exit(1); });
