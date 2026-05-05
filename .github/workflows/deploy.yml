@@ -4,24 +4,13 @@ on:
   push:
     branches: [main]
 
-# Deployment is handled by Railway (connected to this GitHub repo).
-# This workflow only activates when you move to a self-hosted VPS later.
-# Add DEPLOY_HOST, DEPLOY_USER, DEPLOY_KEY, DEPLOY_PATH secrets to enable it.
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ secrets.DEPLOY_HOST != '' }}
     steps:
-      - name: Deploy to server via SSH
-        uses: appleboy/ssh-action@v1.0.3
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Railway
+        uses: railwayapp/railway-github-action@v1.2.0
         with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          port: 22
-          script: |
-            cd ${{ secrets.DEPLOY_PATH }}
-            git pull origin main
-            docker compose up -d --build
-            docker image prune -f
+          railway-token: ${{ secrets.RAILWAY_TOKEN }}
