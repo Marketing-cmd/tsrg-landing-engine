@@ -1,8 +1,8 @@
 <section class="tsrg-section tsrg-features" aria-label="Why work with us">
   <div class="tsrg-container">
     <div class="tsrg-features-grid">
-      <% content.features.forEach(function(feature) { %>
-        <div class="tsrg-feature-card">
+      <% content.features.forEach(function(feature, i) { %>
+        <div class="tsrg-feature-card" data-animate data-animate-delay="<%= i + 1 %>">
           <span class="material-symbols-outlined tsrg-feature-card__icon" aria-hidden="true"><%= feature.icon %></span>
           <h3><%= feature.title %></h3>
           <p><%= feature.description %></p>

@@ -10,6 +10,7 @@ services:
       DATABASE_URL: postgres://tsrg:${DB_PASSWORD}@db:5432/tsrg
     volumes:
       - ./content-overrides.json:/app/content-overrides.json
+      - ./site-content.json:/app/site-content.json
     depends_on:
       db:
         condition: service_healthy

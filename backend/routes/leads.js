@@ -229,8 +229,6 @@ module.exports = function leadRoutes(siteConfig) {
         );
       }
 
-      if (!zapierOk) throw new Error(`Zapier returned ${response.status}`);
-
       res.json({ success: true, leadScore });
     } catch (error) {
       console.error('[lead]', error.message);

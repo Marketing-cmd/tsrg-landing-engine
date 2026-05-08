@@ -1,0 +1,22 @@
+<div class="tsrg-exit" id="tsrg-exit" role="dialog" aria-modal="true" aria-label="Before you go" hidden>
+  <div class="tsrg-exit__backdrop" id="tsrg-exit-backdrop"></div>
+  <div class="tsrg-exit__box">
+    <button class="tsrg-exit__close" id="tsrg-exit-close" aria-label="Close">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+    <div class="tsrg-exit__badge">WAIT — DON'T MISS OUT</div>
+    <div class="tsrg-exit__icon">
+      <span class="material-symbols-outlined" aria-hidden="true">home_work</span>
+    </div>
+    <h2 class="tsrg-exit__title">You're About to Miss <em><%= content.listingGate && content.listingGate.urgencyText ? content.listingGate.urgencyText.replace(/EXCLUSIVE ACCESS: /i,'') : '14 New Listings' %></em></h2>
+    <p class="tsrg-exit__sub">Get the complete list emailed to you in minutes — free, no obligation, cancel anytime.</p>
+    <a class="tsrg-cta-primary tsrg-exit__cta" href="#lead-form" data-cta-role="exit-intent" data-cta-text="Send Me the List">
+      <span>Send Me the List</span>
+      <span class="material-symbols-outlined" aria-hidden="true">send</span>
+    </a>
+    <p class="tsrg-exit__note">
+      <span class="material-symbols-outlined" aria-hidden="true">security</span>
+      No spam · CASL compliant · Unsubscribe anytime
+    </p>
+  </div>
+</div>

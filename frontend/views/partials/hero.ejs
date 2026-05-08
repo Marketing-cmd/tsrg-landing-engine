@@ -59,6 +59,19 @@
           <span><%= content.hero.ctaSecondaryText %></span>
         </a>
       <% } %>
+      <% if (site.whatsapp) { %>
+        <a
+          class="tsrg-cta-whatsapp"
+          href="https://wa.me/<%= site.whatsapp %>"
+          target="_blank"
+          rel="noopener"
+          data-cta-role="hero-whatsapp"
+          data-cta-text="WhatsApp Us"
+        >
+          <span class="material-symbols-outlined" aria-hidden="true">chat</span>
+          <span>WhatsApp Us</span>
+        </a>
+      <% } %>
     </div>
     <% if (content.hero.stats && content.hero.stats.length) { %>
       <div class="tsrg-hero__stats" aria-label="Agent stats">

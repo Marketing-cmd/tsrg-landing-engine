@@ -1,0 +1,29 @@
+<section class="tsrg-section tsrg-how" aria-label="How it works">
+  <div class="tsrg-container">
+    <h2 class="tsrg-section-title" data-animate>How It Works</h2>
+    <p class="tsrg-how__sub" data-animate data-animate-delay="1">Three steps to exclusive property access — takes under 60 seconds</p>
+    <div class="tsrg-how-grid">
+      <% (site.howItWorks || []).forEach(function(step, i) { %>
+        <div class="tsrg-how-step" data-animate data-animate-delay="<%= i + 1 %>">
+          <div class="tsrg-how-step__num"><%= step.step %></div>
+          <div class="tsrg-how-step__icon">
+            <span class="material-symbols-outlined" aria-hidden="true"><%= step.icon %></span>
+          </div>
+          <h3><%= step.title %></h3>
+          <p><%= step.desc %></p>
+        </div>
+        <% if (i < (site.howItWorks.length - 1)) { %>
+          <div class="tsrg-how-connector" aria-hidden="true">
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </div>
+        <% } %>
+      <% }); %>
+    </div>
+    <div class="tsrg-how__cta" data-animate>
+      <a class="tsrg-cta-primary" href="#lead-form" data-cta-role="how-it-works" data-cta-text="<%= content.hero.ctaText %>">
+        <span><%= content.hero.ctaText %></span>
+        <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+      </a>
+    </div>
+  </div>
+</section>

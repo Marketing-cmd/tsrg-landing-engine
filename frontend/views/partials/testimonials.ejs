@@ -1,9 +1,9 @@
 <section class="tsrg-section tsrg-proof" aria-label="Client testimonials">
   <div class="tsrg-container">
-    <h2 class="tsrg-section-title"><%= content.socialProof.headline %></h2>
+    <h2 class="tsrg-section-title" data-animate><%= content.socialProof.headline %></h2>
     <div class="tsrg-testimonial-grid">
-      <% content.socialProof.testimonials.forEach(function(testimonial) { %>
-        <figure class="tsrg-testimonial">
+      <% content.socialProof.testimonials.forEach(function(testimonial, i) { %>
+        <figure class="tsrg-testimonial" data-animate data-animate-delay="<%= i + 1 %>">
           <blockquote><%= testimonial.quote %></blockquote>
           <figcaption><%= testimonial.author %> · <%= testimonial.location %></figcaption>
         </figure>

@@ -1,7 +1,7 @@
 <section class="tsrg-listing-gate tsrg-container" aria-label="<%= content.listingGate.overlayCtaText %>">
   <div class="tsrg-listing-grid">
-    <% content.listingGate.cards.forEach(function(card) { %>
-      <article class="tsrg-listing-card">
+    <% content.listingGate.cards.forEach(function(card, i) { %>
+      <article class="tsrg-listing-card" data-animate data-animate-delay="<%= i + 1 %>">
         <div class="tsrg-listing-card__media">
           <img class="tsrg-listing-card__image" src="<%= card.image %>" alt="<%= card.alt %>">
           <span class="tsrg-listing-card__badge"><%= card.badge %></span>
@@ -22,14 +22,25 @@
   </div>
 
   <div class="tsrg-unlock-overlay">
-    <a
-      class="tsrg-cta-primary"
-      href="<%= content.listingGate.overlayCtaUrl %>"
-      data-cta-role="listing-overlay"
-      data-cta-text="<%= content.listingGate.overlayCtaText %>"
-    >
-      <span><%= content.listingGate.overlayCtaText %></span>
-      <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
-    </a>
+    <div class="tsrg-unlock-panel">
+      <div class="tsrg-countdown" aria-live="polite">
+        <span class="material-symbols-outlined" aria-hidden="true">timer</span>
+        <span>Access expires in </span>
+        <strong id="tsrg-countdown-display">23:47:09</strong>
+      </div>
+      <a
+        class="tsrg-cta-primary"
+        href="<%= content.listingGate.overlayCtaUrl %>"
+        data-cta-role="listing-overlay"
+        data-cta-text="<%= content.listingGate.overlayCtaText %>"
+      >
+        <span><%= content.listingGate.overlayCtaText %></span>
+        <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+      </a>
+      <p class="tsrg-unlock-note">
+        <span class="material-symbols-outlined" aria-hidden="true">group</span>
+        <span id="tsrg-viewing-count">12 people</span> viewing this list right now
+      </p>
+    </div>
   </div>
 </section>

@@ -1,4 +1,243 @@
-/*
- * Custom site overrides live here.
- * Add any extra CSS without touching the core component styles.
- */
+/* ═══════════════════════════════════════════════════════════
+   TSRG — Animations & micro-interactions
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Keyframes ───────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(36px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-24px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes goldPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(198,156,63,0.55); }
+  70%  { box-shadow: 0 0 0 14px rgba(198,156,63,0); }
+  100% { box-shadow: 0 0 0 0 rgba(198,156,63,0); }
+}
+@keyframes shimmer {
+  0%        { left: -100%; }
+  50%, 100% { left: 160%; }
+}
+@keyframes glowBreath {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.3); }
+}
+@keyframes rippleOut {
+  to { transform: scale(4); opacity: 0; }
+}
+@keyframes badgeIn {
+  from { opacity: 0; transform: translateY(6px) scale(0.95); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes borderGlow {
+  0%, 100% { border-color: rgba(198,156,63,0.2); }
+  50%       { border-color: rgba(198,156,63,0.5); }
+}
+@keyframes counterBounce {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+/* ── Hero entrances ──────────────────────────────────────── */
+.tsrg-hero__agent     { animation: fadeInDown 0.7s cubic-bezier(0.22,1,0.36,1) both 0.1s; }
+.tsrg-hero h1         { animation: fadeInUp   0.8s cubic-bezier(0.22,1,0.36,1) both 0.22s; }
+.tsrg-hero__subheadline{ animation: fadeInUp  0.8s cubic-bezier(0.22,1,0.36,1) both 0.38s; }
+.tsrg-hero__ctas      { animation: fadeInUp   0.8s cubic-bezier(0.22,1,0.36,1) both 0.52s; }
+.tsrg-hero__stats     { animation: fadeInScale 0.8s cubic-bezier(0.22,1,0.36,1) both 0.66s; }
+
+/* ── Scroll-reveal base ──────────────────────────────────── */
+[data-animate] {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity  0.65s cubic-bezier(0.22,1,0.36,1),
+    transform 0.65s cubic-bezier(0.22,1,0.36,1);
+}
+[data-animate].is-visible { opacity: 1; transform: none; }
+[data-animate-delay="1"] { transition-delay: 0.07s; }
+[data-animate-delay="2"] { transition-delay: 0.14s; }
+[data-animate-delay="3"] { transition-delay: 0.21s; }
+[data-animate-delay="4"] { transition-delay: 0.28s; }
+[data-animate-delay="5"] { transition-delay: 0.35s; }
+[data-animate-delay="6"] { transition-delay: 0.42s; }
+
+/* ── Primary CTA pulse ring ──────────────────────────────── */
+.tsrg-cta-primary {
+  animation: goldPulse 2.6s ease-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+.tsrg-cta-primary:hover { animation: none; }
+
+/* ── Button shimmer sweep ────────────────────────────────── */
+.tsrg-submit::before,
+.tsrg-cta-primary::before,
+.tsrg-topbar__button::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform: skewX(-20deg);
+  animation: shimmer 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ── Ripple on click ─────────────────────────────────────── */
+.tsrg-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  pointer-events: none;
+  animation: rippleOut 0.55s linear forwards;
+}
+
+/* ── Form panel glow breathing ───────────────────────────── */
+.tsrg-form-panel__glow { animation: glowBreath 5s ease-in-out infinite; }
+.tsrg-form-panel { animation: fadeInUp 0.9s cubic-bezier(0.22,1,0.36,1) both 0.1s; }
+
+/* Animated border on form panel */
+.tsrg-form-panel { animation: borderGlow 4s ease-in-out infinite, fadeInUp 0.9s cubic-bezier(0.22,1,0.36,1) both 0.1s; }
+
+/* ── Feature cards ───────────────────────────────────────── */
+.tsrg-feature-card {
+  transition: transform 0.28s cubic-bezier(0.22,1,0.36,1), box-shadow 0.28s ease;
+  will-change: transform;
+}
+.tsrg-feature-card:hover {
+  transform: translateY(-9px) scale(1.015);
+  box-shadow: 0 28px 60px rgba(10,22,40,0.14);
+}
+.tsrg-feature-card__icon {
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), background 0.3s ease;
+}
+.tsrg-feature-card:hover .tsrg-feature-card__icon {
+  transform: scale(1.25) rotate(-8deg);
+  background: linear-gradient(135deg, rgba(198,156,63,0.28), rgba(198,156,63,0.1));
+}
+
+/* ── Testimonials ────────────────────────────────────────── */
+.tsrg-testimonial {
+  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+}
+.tsrg-testimonial:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 56px rgba(0,0,0,0.3);
+  border-color: rgba(198,156,63,0.4);
+}
+
+/* ── Listing cards ───────────────────────────────────────── */
+.tsrg-listing-card {
+  transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s ease;
+}
+.tsrg-listing-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 32px 72px rgba(10,22,40,0.18);
+}
+.tsrg-listing-card__media { overflow: hidden; }
+.tsrg-listing-card__image { transition: transform 0.55s ease; }
+.tsrg-listing-card:hover .tsrg-listing-card__image { transform: scale(1.09); }
+
+/* ── Trust badges stagger ────────────────────────────────── */
+.tsrg-trust__badge { animation: badgeIn 0.5s cubic-bezier(0.22,1,0.36,1) both; }
+.tsrg-trust__badge:nth-child(1) { animation-delay: 0.04s; }
+.tsrg-trust__badge:nth-child(2) { animation-delay: 0.10s; }
+.tsrg-trust__badge:nth-child(3) { animation-delay: 0.16s; }
+.tsrg-trust__badge:nth-child(4) { animation-delay: 0.22s; }
+.tsrg-trust__badge:nth-child(5) { animation-delay: 0.28s; }
+.tsrg-trust__badge:nth-child(6) { animation-delay: 0.34s; }
+.tsrg-trust__badge {
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+.tsrg-trust__badge:hover { transform: scale(1.05); }
+
+/* ── Navbar shadow on scroll ─────────────────────────────── */
+.tsrg-topbar { transition: box-shadow 0.3s ease; }
+.tsrg-topbar--scrolled { box-shadow: 0 4px 28px rgba(0,0,0,0.35); }
+
+/* ── Section title reveal ────────────────────────────────── */
+.tsrg-section-title[data-animate] { transform: translateY(22px); }
+
+/* ── Form progress bar ───────────────────────────────────── */
+.tsrg-form-progress {
+  grid-column: 1 / -1;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.1);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+.tsrg-form-progress__bar {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--gold, #c69c3f), #e8c96a);
+  width: 0%;
+  transition: width 0.45s cubic-bezier(0.22,1,0.36,1);
+}
+
+/* ── Counter bounce when it finishes ────────────────────── */
+.tsrg-hero__stat-value.counted { animation: counterBounce 0.4s ease; }
+
+/* ── Form success ────────────────────────────────────────── */
+.tsrg-form-success { animation: fadeInScale 0.55s cubic-bezier(0.22,1,0.36,1) both; }
+.tsrg-form-success__icon {
+  font-size: 4rem !important;
+  color: #4ade80 !important;
+  animation: fadeInDown 0.5s cubic-bezier(0.34,1.56,0.64,1) both 0.1s;
+}
+
+/* ── Social proof toast ──────────────────────────────────── */
+.tsrg-toast {
+  position: fixed;
+  bottom: 80px; left: 20px;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(10,22,40,0.96);
+  border: 1px solid rgba(198,156,63,0.3);
+  border-radius: var(--radius-md, 14px);
+  padding: 14px 18px;
+  max-width: 290px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 12px 44px rgba(0,0,0,0.4);
+  opacity: 0;
+  transform: translateY(16px) scale(0.96);
+  transition: opacity 0.45s cubic-bezier(0.22,1,0.36,1),
+              transform 0.45s cubic-bezier(0.22,1,0.36,1);
+  pointer-events: none;
+}
+.tsrg-toast.is-visible { opacity: 1; transform: none; }
+.tsrg-toast__icon {
+  width: 36px; height: 36px; flex-shrink: 0;
+  border-radius: 50%;
+  background: rgba(198,156,63,0.15);
+  color: #c69c3f;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid rgba(198,156,63,0.25);
+}
+.tsrg-toast__icon .material-symbols-outlined { font-size: 1.1rem; }
+.tsrg-toast__body { line-height: 1.4; }
+.tsrg-toast__name  { font-size: 0.85rem; font-weight: 800; color: #e8c96a; }
+.tsrg-toast__action{ font-size: 0.78rem; color: rgba(255,255,255,0.55); margin-top: 1px; }
+
+/* On desktop push toast above sticky bar height (sticky bar hidden on desktop) */
+@media (min-width: 768px) {
+  .tsrg-toast { bottom: 28px; }
+}
+
+/* ── Reduced motion ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  [data-animate] { opacity: 1 !important; transform: none !important; }
+}

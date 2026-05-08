@@ -1,0 +1,60 @@
+{
+  "_note": "Edit this file and run 'docker compose restart landing' — no rebuild needed.",
+  "contact": {
+    "phone": "416-555-1234",
+    "email": "hello@tsrg.ca",
+    "whatsapp": ""
+  },
+  "compliance": {
+    "recoNumber": "RECO #XXXXXXX",
+    "brokerageName": "The Smith Realty Group Inc., Brokerage",
+    "brokerageAddress": "Your Brokerage Address, Toronto, ON",
+    "legalDisclaimer": "Not intended to solicit individuals currently under a listing or buyer representation agreement with another brokerage. All information is believed to be accurate but is not guaranteed."
+  },
+  "howItWorks": [
+    {
+      "step": "01",
+      "icon": "edit_note",
+      "title": "Submit Your Info",
+      "desc": "Fill out the quick form — takes under 60 seconds. No credit card, no obligation whatsoever."
+    },
+    {
+      "step": "02",
+      "icon": "mark_email_read",
+      "title": "Get Instant Access",
+      "desc": "Receive the complete list by email within minutes, updated every business day with new properties."
+    },
+    {
+      "step": "03",
+      "icon": "home_work",
+      "title": "Tour & Secure",
+      "desc": "Brian personally guides you through every property — from offer strategy to handing over the keys."
+    }
+  ],
+  "faq": [
+    {
+      "q": "Is this list really free?",
+      "a": "Yes — completely free. There is no cost to access the list. Our compensation comes from representing you when you purchase a property. No hidden fees, ever."
+    },
+    {
+      "q": "Will I be called or spammed after submitting?",
+      "a": "You'll receive one email with the list, then a single follow-up call from Brian within one business day. That's it — no automated drip campaigns, no spam, no pressure."
+    },
+    {
+      "q": "How often is the list updated?",
+      "a": "Every business day. New foreclosure and power-of-sale properties are added as they come to market across the GTA."
+    },
+    {
+      "q": "Do I need to be pre-approved to access the list?",
+      "a": "No pre-approval required. You can browse the full list first. Brian also works with top mortgage brokers who can get you pre-approved fast if you're ready to move."
+    },
+    {
+      "q": "What areas does the list cover?",
+      "a": "The full GTA and surrounding areas: Toronto, Mississauga, Brampton, Oakville, Burlington, Markham, Richmond Hill, Vaughan, and more."
+    },
+    {
+      "q": "What is the difference between a power of sale and foreclosure?",
+      "a": "Power of sale is the most common in Ontario — the lender sells the property to recover the outstanding debt. Foreclosure means the lender takes legal ownership first. Both can represent below-market opportunities for informed buyers."
+    }
+  ]
+}

@@ -2,8 +2,30 @@
   <%- include('../partials/hero', { content, campaignId, utm, site }) %>
   <%- include('../partials/trust-badges', { content }) %>
   <%- include('../partials/listing-gate', { content, campaignId, utm, site }) %>
+  <%- include('../partials/how-it-works', { content, site }) %>
   <%- include('../partials/features', { content }) %>
   <%- include('../partials/testimonials', { content }) %>
+  <%- include('../partials/faq', { content, site }) %>
   <%- include('../partials/lead-form', { content, campaignId, utm, site }) %>
 </main>
 <%- include('../partials/footer', { content, site }) %>
+
+<div class="tsrg-sticky-bar" aria-label="Quick access">
+  <div class="tsrg-sticky-bar__text">
+    <strong>Get the Full List — Free</strong>
+    No obligation. Instant access.
+  </div>
+  <div class="tsrg-sticky-bar__btns">
+    <% if (site.whatsapp) { %>
+      <a class="tsrg-sticky-bar__wa" href="https://wa.me/<%= site.whatsapp %>" target="_blank" rel="noopener" aria-label="WhatsApp">
+        <span class="material-symbols-outlined">chat</span>
+      </a>
+    <% } %>
+    <a class="tsrg-sticky-bar__cta" href="#lead-form" data-cta-role="sticky-bar" data-cta-text="Get Access Now">
+      Get Access Now
+    </a>
+  </div>
+</div>
+
+<%- include('../partials/exit-intent', { content, site }) %>
+<%- include('../partials/cookie-consent', { content, site }) %>

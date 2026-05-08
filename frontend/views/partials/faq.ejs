@@ -1,0 +1,24 @@
+<section class="tsrg-section tsrg-faq" aria-label="Frequently asked questions">
+  <div class="tsrg-container">
+    <h2 class="tsrg-section-title tsrg-faq__title" data-animate>Common Questions</h2>
+    <p class="tsrg-faq__sub" data-animate data-animate-delay="1">Everything you need to know before getting started</p>
+    <div class="tsrg-faq-list">
+      <% (site.faq || []).forEach(function(item, i) { %>
+        <details class="tsrg-faq-item" data-animate data-animate-delay="<%= (i % 3) + 1 %>">
+          <summary class="tsrg-faq-item__q">
+            <span><%= item.q %></span>
+            <span class="material-symbols-outlined tsrg-faq-item__icon" aria-hidden="true">add</span>
+          </summary>
+          <div class="tsrg-faq-item__a"><p><%= item.a %></p></div>
+        </details>
+      <% }); %>
+    </div>
+    <p class="tsrg-faq__more" data-animate>
+      Still have questions?
+      <a href="<%= site.phoneHref %>">
+        <span class="material-symbols-outlined" aria-hidden="true">call</span>
+        Call <%= site.phone %> — we answer every call.
+      </a>
+    </p>
+  </div>
+</section>

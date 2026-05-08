@@ -4,6 +4,10 @@ const path = require('path');
 const express = require('express');
 const { runMigrations } = require('./backend/lib/migrations');
 const siteConfig = require('./backend/config/siteConfig');
+const { applyToConfig } = require('./backend/lib/siteContent');
+
+// Merge site-content.json (editable without rebuild) into siteConfig
+applyToConfig(siteConfig);
 const utmParser = require('./backend/middleware/utmParser');
 const contentResolver = require('./backend/middleware/contentResolver');
 const landingRoutes = require('./backend/routes/landing');
